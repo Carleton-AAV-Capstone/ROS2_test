@@ -23,7 +23,8 @@ setup(
     entry_points={
         'console_scripts': [
             "aav_test_node =  aav_test.node:main",
-            "draw_circle = aav_test.draw_circle:main"
+            "draw_circle = aav_test.draw_circle:main",
+            "pose_subscriber = aav_test.pose_subscriber:main"
         ],
     },
 )
