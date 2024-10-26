@@ -1,0 +1,85 @@
+install ros2 desktop version
+make sure virtual machine is bridged adapter
+
+Add this to end of ~/.bashrc to setup ros2 setup in every new terminal
+source /opt/ros/jazzy/setup.bash
+
+Test listener and talker in separate terminals/pcs
+ros2 run demo_nodes_cpp talker
+ros2 run demo_nodes_py listener
+
+To view graph of connections
+rqt_graph
+
+Install colcon to build ros packages
+sudo apt install python3-colcon-common-extensions
+
+add this line to ~/.bashrc
+source  /usr/share/colcon_cd/function/colcon_cd-argcomplete.bash
+
+setup ros workspace
+mkdir ros2_ws
+mkdir ros2_ws/src
+
+you can now build this empty workspace (run from ros2_ws)
+colcon build
+
+install vscode
+sudo snap install code --classic
+
+This should create a few files, add the setup file in the install folder to ~/.bashrc: add this line
+source ~/ros2_ws/install/setup.bash
+
+lets create our own ros2 package under ros2_ws/src directory
+For python we need rclpy dependency
+ros2 pkg create <pkg_name> --build-type ament_python --dependencies rclpy
+ros2 pkg create <pkg_name> --build-type ament_cmake
+ros2 pkg create aav_test --build-type ament_python --dependencies rclpy
+
+touch ros2_ws/src/aav_test/aav_test/node.py
+
+download the ros extension for vsc to make it easier 
+lets create a new python file node.py to run a node
+View code and comments to understand.
+	- We create a node class inheriting the node class for rclpy to create and shutdown nodes
+	- We can use the spin functions to keep the node alive until we hit ctrl c 
+	- We use callbacks to call a function on an event (in our case a timer)
+
+To run this as part of our ros package we must add the executable under setup.py in console_scripts
+add the following
+	"<executable_name> = <directory>.<file_name>:<function>"
+	"aav_test_node = aav_test.node:main"
+
+Now our file should be added to the package and can build and run it
+In ros2_ws, build then run
+
+colcon build
+ros2 run <package> <executable>
+ros2 run aav_test aav_test_node
+
+we can build and run in the same command by specifying symlink argument for the build
+colcon build --symlink-install
+
+everytime we run, we use updated files and dont need to build everytime
+
+the "rqt_graph" terminal command should show all nodes graphically
+we can also list all nodes with: 
+ros2 node list
+
+and get info about a node with 
+ros2 node info /<node_name>
+ros2 node info /auto_node
+
+ros2 publisher sends data to a topic
+ros2 subscriber subscribes to topic
+
+topic has the data format that is to be sent, interface is the type of data being sent
+
+to see all topics
+ros2 topic list 
+
+to see interface and pub/sub counts
+ros2 topic info <topic_name>
+
+to see format of the interface
+ros2 interface show <interface_name>
